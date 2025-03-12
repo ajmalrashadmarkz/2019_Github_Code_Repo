@@ -1,0 +1,205 @@
+{% extends 'admin_dashboard_base.html' %}
+{% load static %}
+
+{% block body %}
+<div class="page-wrapper">
+    <div class="content">
+        <div class="page-header">
+            <div class="page-title">
+                <h4>Category List</h4>
+                <h6>Manage your categories</h6>
+            </div>
+
+            <div class="page-btn">
+                <a href="{% url 'admin_dashboard-category_add' %}" class="btn btn-added">
+                    <img src="{% static 'assets/img/icons/plus.svg' %}" class="me-1" alt="Add Category">Add Category
+                </a>
+            </div>
+        </div>
+
+        <!-- Django Messages -->
+        <div id="django-messages-container">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert {% if message.tags %}alert-{{ message.tags }}{% else %}alert-info{% endif %} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <!-- Search and Filter Section -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <form method="get" class="d-flex">
+                            <input type="search" name="search" class="form-control me-2" 
+                                   placeholder="Search categories..." 
+                                   value="{{ search_query }}">
+                            <button type="submit" class="btn btn-primary">Search</button>
+                        </form>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" 
+                                    data-bs-toggle="dropdown">
+                                Sort By: {{ sort_by }} ({{ order }})
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="?sort=name&order=asc">Name (Ascending)</a></li>
+                                <li><a class="dropdown-item" href="?sort=name&order=desc">Name (Descending)</a></li>
+                                <li><a class="dropdown-item" href="?sort=created_at&order=desc">Newest First</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Category Table -->
+                <div class="table-responsive">
+                    <table class="table datanew">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Style</th>
+                                <th>Parent Category</th>
+                                <th>Created At</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for category in category_list %}
+                            <tr id="row-{{ category.id }}">
+                                <td>{{ forloop.counter }}</td>
+                                <td>
+                                    {% if category.icon %}
+                                    <img src="{{ category.icon.url }}" alt="{{ category.name }}" class="img-thumbnail" style="width: 50px; height: 50px;">
+                                    {% else %}
+                                    <img src="{% static 'assets/img/placeholder.png' %}" alt="No Image" class="img-thumbnail" style="width: 50px; height: 50px;">
+                                    {% endif %}
+                                </td>
+                                <td>{{ category.name }}</td>
+                                <td>{{ category.get_style_display }}</td>
+                                <td>
+                                    {% if category.parent %}
+                                        {{ category.parent.name }}
+                                    {% else %}
+                                        -------
+                                    {% endif %}
+                                </td>
+                                <td>{{ category.created_at|date:"M d, Y" }}</td>
+                                <td>
+                                    <div class="dropdown">
+                                        <button class="btn btn-sm btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                            Actions
+                                        </button>
+                                        <ul class="dropdown-menu">
+                                            <li>
+                                                <a href="{% url 'admin_dashboard-category_details' category.pk %}" 
+                                                   class="dropdown-item">
+                                                    View Details
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="{% url 'admin_dashboard-category_edit' category.pk %}" 
+                                                   class="dropdown-item">
+                                                    Edit
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="#" 
+                                                   class="dropdown-item text-danger delete-category" 
+                                                   data-bs-toggle="modal" 
+                                                   data-bs-target="#deleteModal{{ category.id }}"
+                                                   data-category-id="{{ category.id }}">
+                                                    Delete
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+
+                            <!-- Delete Confirmation Modal -->
+                            <div class="modal fade" 
+                                 id="deleteModal{{ category.id }}" 
+                                 data-category-id="{{ category.id }}"
+                                 tabindex="-1" 
+                                 aria-labelledby="deleteModalLabel{{ category.id }}" 
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteModalLabel{{ category.id }}">
+                                                Confirm Delete
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Are you sure you want to delete the category "{{ category.name }}"?
+                                            <p class="text-danger">This action cannot be undone.</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                Cancel
+                                            </button>
+                                            <form method="post" 
+                                                  action="{% url 'admin_dashboard-category_delete' category.pk %}"
+                                                  class="delete-category-form">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-danger">
+                                                    Confirm Delete
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination Controls -->
+                {% if total_categories > per_page %}
+                <nav>
+                    <ul class="pagination">
+                        {% if category_list.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ category_list.previous_page_number }}">Previous</a>
+                        </li>
+                        {% endif %}
+                        
+                        {% for num in category_list.paginator.page_range %}
+                            {% if category_list.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                            {% else %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if category_list.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ category_list.next_page_number }}">Next</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+                {% endif %}
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock body %}
