@@ -117,6 +117,56 @@
     .note-editing-area {
         background-color: white;
     }
+    .is-invalid-select2 .select2-selection {
+        border-color: #dc3545 !important;
+    }
+
+    /* Simple Category Box Styles */
+    .category-box {
+        background-color: #ffffff;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        padding: 15px;
+        margin-bottom: 20px;
+    }
+
+    .category-label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .category-select select {
+        width: 100%;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        background-color: #f9f9f9;
+        min-height: 100px;
+    }
+
+    .category-select select:focus {
+        outline: none;
+        border-color: #4a90e2;
+        box-shadow: 0 0 3px rgba(74, 144, 226, 0.3);
+    }
+
+    .category-select select option {
+        padding: 5px;
+    }
+
+    .category-select select option:checked {
+        background-color: #4a90e2;
+        color: white;
+    }
+
+    .category-error {
+        color: #dc3545;
+        font-size: 14px;
+        margin-top: 5px;
+        padding: 5px;
+    }
 </style>
 {% endblock %}
 
@@ -235,18 +285,15 @@
                             </div>
                         
                             <!-- Categories -->
-                            <div class="mb-3">
-                                {{ form.categories.label_tag }}
-                                {{ form.categories }}
-                                {% if form.categories.errors %}
-                                <div class="invalid-feedback">
-                                    {% for error in form.categories.errors %}
-                                        {{ error }}
-                                    {% endfor %}
+                            <div class="category-box">
+                                <label class="category-label">Categories</label>
+                                <div class="category-select">
+                                    {{ form.categories }}
                                 </div>
-                                {% endif %}
-                                {% if form.categories.help_text %}
-                                <small class="form-text text-muted">{{ form.categories.help_text }}</small>
+                                {% if form.categories.errors %}
+                                <div class="category-error">
+                                    {% for error in form.categories.errors %}{{ error }}{% endfor %}
+                                </div>
                                 {% endif %}
                             </div>
                         
@@ -551,14 +598,45 @@
 
     // Form validation
     function initializeFormValidation() {
-        const form = document.getElementById('productForm');
-        if (!form) return;
+    const form = document.getElementById('productForm');
+    if (!form) return;
 
         form.addEventListener('submit', function(event) {
             let isValid = true;
             
+            // Clear previous error messages
+            document.querySelectorAll('.alert-danger').forEach(el => el.remove());
+            
             // Update specifications data before validation
             updateSpecificationsData();
+            
+            // Validate categories field
+            const categoriesField = document.getElementById('id_categories');
+            if (categoriesField && categoriesField.required && 
+                (!categoriesField.value || (categoriesField.selectedOptions && categoriesField.selectedOptions.length === 0))) {
+                categoriesField.classList.add('is-invalid');
+                
+                // Handle Select2 styling if it's being used
+                if ($(categoriesField).next('.select2-container').length) {
+                    $(categoriesField).next('.select2-container').addClass('is-invalid-select2');
+                    
+                    // Add error message if it doesn't exist
+                    if (!$(categoriesField).nextAll('.invalid-feedback').length) {
+                        $('<div class="invalid-feedback d-block">Please select at least one category.</div>')
+                            .insertAfter($(categoriesField).next('.select2-container'));
+                    }
+                }
+                
+                isValid = false;
+            } else if (categoriesField) {
+                categoriesField.classList.remove('is-invalid');
+                
+                // Handle Select2 styling
+                if ($(categoriesField).next('.select2-container').length) {
+                    $(categoriesField).next('.select2-container').removeClass('is-invalid-select2');
+                    $(categoriesField).nextAll('.invalid-feedback').remove();
+                }
+            }
             
             // Validate specifications
             const container = document.getElementById('specificationsContainer');
@@ -568,7 +646,7 @@
                 isValid = false;
                 showError('At least one specification is required.');
             }
-
+            
             specRows.forEach(row => {
                 const titleInput = row.querySelector('.specification-title');
                 const valueEditor = row.querySelector('.specification-value');
@@ -593,7 +671,7 @@
                 event.stopPropagation();
                 
                 // Scroll to first error
-                const firstError = document.querySelector('.is-invalid, .border-danger');
+                const firstError = document.querySelector('.is-invalid, .border-danger, .is-invalid-select2');
                 if (firstError) {
                     firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
@@ -645,4 +723,3 @@
     });
 </script>
 {% endblock %}
-
