@@ -1,0 +1,253 @@
+{% include 'admin_dashboard_base.html' %}
+{% load static %}
+{% block content %}
+<div class="page-wrapper">
+    <div class="content">
+        <div class="page-header">
+            <div class="page-title">
+                <h4>{% if edit_mode %}Edit{% else %}Add{% endif %} Product</h4>
+                <h6>{% if edit_mode %}Modify Existing{% else %}Create New{% endif %} Product</h6>
+            </div>
+            <div class="page-btn">
+                <a href="{% url 'admin_dashboard-category_list' %}" class="btn btn-added">
+                    <img src="{% static 'assets/img/icons/eye.svg' %}" class="me-1" alt="View Products">View Products
+                </a>
+            </div>
+        </div>
+
+        <!-- Product Form -->
+        <div class="card mt-3">
+            <div class="card-body">
+                <form action="{% url 'admin_dashboard-product_add' %}" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="row">
+                        <!-- Left Column -->
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.name.label_tag }}
+                                {{ form.name }}
+                                {% for error in form.name.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.short_description.label_tag }}
+                                {{ form.short_description }}
+                                {% for error in form.short_description.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.detailed_description.label_tag }}
+                                {{ form.detailed_description }}
+                                {% for error in form.detailed_description.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <!-- Dynamic Specifications Section -->
+                            <div class="mb-3">
+                                <label for="specifications" class="form-label">Product Specifications</label>
+                                <div id="specifications-container" class="mb-2">
+                                    <!-- Dynamic rows will be added here -->
+                                </div>
+                                <button type="button" id="add-specification-btn" class="btn btn-secondary mb-2">
+                                    <i class="fas fa-plus"></i> Add Specification
+                                </button>
+                                {% for error in form.specifications.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                {{ form.quantity_in_stock.label_tag }}
+                                {{ form.quantity_in_stock }}
+                                {% for error in form.quantity_in_stock.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.categories.label_tag }}
+                                {{ form.categories }}
+                                {% for error in form.categories.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                                <small class="form-text text-muted">
+                                    {{ form.categories.help_text }}
+                                </small>
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.main_image.label_tag }}
+                                {{ form.main_image }}
+                                {% for error in form.main_image.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.additional_images.label_tag }}
+                                {{ form.additional_images }}
+                                {% for error in form.additional_images.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                                <small class="form-text text-muted">
+                                    {{ form.additional_images.help_text }}
+                                </small>
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.additional_documents.label_tag }}
+                                {{ form.additional_documents }}
+                                {% for error in form.additional_documents.errors %}
+                                    <div class="text-danger">{{ error }}</div>
+                                {% endfor %}
+                                <small class="form-text text-muted">
+                                    {{ form.additional_documents.help_text }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Hidden Specifications Input -->
+                    <input type="hidden" id="id_specifications" name="specifications" />
+
+                    <!-- Submit Button -->
+                    <div class="text-end">
+                        <button type="submit" class="btn btn-primary">
+                            {% if edit_mode %}Update{% else %}Add{% endif %} Product
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
+
+<script>
+    $(document).ready(function() {
+        // Initialize Select2
+        $('#id_categories').select2({
+            placeholder: 'Select categories',
+            allowClear: true,
+            multiple: true
+        });
+
+        // Specifications handling
+        const specificationsContainer = document.getElementById('specifications-container');
+        const addSpecificationBtn = document.getElementById('add-specification-btn');
+        const hiddenSpecificationsInput = document.getElementById('id_specifications');
+
+        // Function to initialize Summernote
+        function initializeSummernote(element) {
+            $(element).summernote({
+                height: 150,
+                toolbar: [
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['font', ['strikethrough']],
+                    ['para', ['ul', 'ol']],
+                    ['insert', ['link']],
+                    ['view', ['fullscreen', 'codeview']]
+                ],
+                callbacks: {
+                    onChange: updateHiddenInput
+                }
+            });
+        }
+
+        // Function to create a new specification row
+        function createSpecificationRow(key = '', value = '') {
+            const row = document.createElement('div');
+            row.className = 'specification-row mb-3 d-flex flex-column';
+            
+            // Key input
+            const keyInput = document.createElement('input');
+            keyInput.type = 'text';
+            keyInput.className = 'form-control mb-2';
+            keyInput.placeholder = 'Key (e.g., Color)';
+            keyInput.value = key;
+
+            // Value textarea (Summernote)
+            const valueTextarea = document.createElement('textarea');
+            valueTextarea.className = 'form-control specification-value';
+            valueTextarea.placeholder = 'Value (e.g., Red)';
+            valueTextarea.value = value;
+
+            // Remove button
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.className = 'btn btn-danger mt-2';
+            removeBtn.innerHTML = '&times;';
+            removeBtn.onclick = () => {
+                row.remove();
+                updateHiddenInput();
+            };
+
+            // Append elements
+            row.appendChild(keyInput);
+            row.appendChild(valueTextarea);
+            row.appendChild(removeBtn);
+
+            specificationsContainer.appendChild(row);
+
+            // Initialize Summernote
+            initializeSummernote(valueTextarea);
+        }
+
+        // Function to update hidden input with JSON
+        function updateHiddenInput() {
+            const rows = document.querySelectorAll('.specification-row');
+            const specifications = {};
+
+            rows.forEach(row => {
+                const key = row.querySelector('input').value.trim();
+                const value = $(row.querySelector('textarea')).summernote('code').trim();
+
+                if (key && value) {
+                    specifications[key] = value;
+                }
+            });
+
+            hiddenSpecificationsInput.value = JSON.stringify(specifications);
+        }
+
+        // Add specification button event listener
+        addSpecificationBtn.addEventListener('click', () => {
+            createSpecificationRow();
+        });
+
+        // Populate existing specifications if available
+        function populateExistingSpecifications() {
+            if (hiddenSpecificationsInput.value) {
+                try {
+                    const existingSpecs = JSON.parse(hiddenSpecificationsInput.value);
+                    Object.entries(existingSpecs).forEach(([key, value]) => {
+                        createSpecificationRow(key, value);
+                    });
+                } catch (e) {
+                    console.error('Error parsing existing specifications', e);
+                }
+            }
+
+            if (specificationsContainer.children.length === 0) {
+                createSpecificationRow();
+            }
+        }
+
+        // Initial population of specifications
+        populateExistingSpecifications();
+    });
+</script>
+{% endblock %}
