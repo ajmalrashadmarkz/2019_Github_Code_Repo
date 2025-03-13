@@ -1,4 +1,3 @@
-
 from django import forms
 from .models import Product, Category, ProductImage, ProductDocument
 from django import forms
@@ -7,10 +6,12 @@ from .models import Product, Category, ProductImage, ProductDocument, ProductSpe
 import json
 from django.db.models import Q
 
+
 class ProductForm(forms.ModelForm):
     categories = forms.ModelMultipleChoiceField(
-        # queryset=Category.objects.filter(deleted_at__isnull=True),
-        queryset = Category.objects.filter(deleted_at__isnull=True).filter(~Q(id__in=Category.objects.filter(parent__isnull=False).values_list('parent', flat=True))),
+        queryset = Category.objects.filter(deleted_at__isnull=True).filter(
+            ~Q(id__in=Category.objects.filter(parent__isnull=False).values_list('parent', flat=True))
+        ),
         widget=forms.SelectMultiple(attrs={
             'class': 'form-control select2',
             'multiple': 'multiple'
@@ -47,7 +48,6 @@ class ProductForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'placeholder': 'Enter product name'}),
             'short_description': forms.TextInput(attrs={'placeholder': 'Enter short description'}),
             'detailed_description': forms.Textarea(attrs={'placeholder': 'Enter detailed description'}),
-            #'detailed_description': SummernoteWidget(),
             'main_image': forms.FileInput(attrs={'class': 'form-control'}),
             'quantity_in_stock': forms.NumberInput(attrs={'placeholder': 'Enter stock quantity'}),
         }
@@ -87,22 +87,63 @@ class ProductForm(forms.ModelForm):
             'accept': '.pdf,.doc,.docx,.txt,.xls,.xlsx,.csv,.ppt,.pptx'
         })
 
+    def clean_name(self):
+        """
+        Custom validation for product name uniqueness
+        """
+        name = self.cleaned_data.get('name')
+        if not name:
+            return name
+
+        # Get the current instance if we're editing
+        instance = getattr(self, 'instance', None)
+        
+        # Build the query to check for duplicate names
+        query = Product.objects.filter(name__iexact=name)
+        
+        # If we're editing, exclude the current instance from the check
+        if instance and instance.pk:
+            query = query.exclude(pk=instance.pk)
+            
+        # If we found any other products with this name
+        if query.exists():
+            raise ValidationError("Product with this Name already exists.")
+            
+        return name
+
     def clean_specifications(self):
+        """
+        Validate specifications format and content
+        """
         specs = self.cleaned_data.get('specifications')
-        if specs:
-            if not isinstance(specs, dict):
-                try:
-                    specs = json.loads(specs)
-                except json.JSONDecodeError:
+        if not specs:
+            return []
+
+        try:
+            if isinstance(specs, str):
+                specs = json.loads(specs)
+            
+            # Convert dict format to list format if necessary
+            if isinstance(specs, dict):
+                specs = [{'title': k, 'value': v} for k, v in specs.items()]
+            
+            # Validate each specification
+            for spec in specs:
+                if not isinstance(spec, dict):
                     raise ValidationError("Invalid specification format")
+                
+                if 'title' not in spec or 'value' not in spec:
+                    raise ValidationError("Specifications must have both title and value")
+                
+                if not spec['title'].strip() or not spec['value'].strip():
+                    raise ValidationError("Specification title and value cannot be empty")
+                
+        except json.JSONDecodeError:
+            raise ValidationError("Invalid specification format")
+        except (KeyError, AttributeError):
+            raise ValidationError("Invalid specification structure")
 
-            for key, value in specs.items():
-                if not isinstance(key, str) or not isinstance(value, str):
-                    raise ValidationError("Specifications must be text")
-                if not key.strip() or not value.strip():
-                    raise ValidationError("Specification keys and values cannot be empty")
-
-        return specs or {}
+        return specs
 
     def save(self, commit=True):
         instance = super().save(commit=False)
@@ -110,28 +151,33 @@ class ProductForm(forms.ModelForm):
         if commit:
             instance.save()
 
-            specs_data = self.cleaned_data.get('specifications', {})
-            if isinstance(specs_data, str):
-                try:
-                    specs_data = json.loads(specs_data)
-                except json.JSONDecodeError:
-                    specs_data = {}
+            # Handle specifications
+            specs_data = self.cleaned_data.get('specifications', [])
+            
+            # Delete existing specifications
+            ProductSpecification.objects.filter(product=instance).delete()
 
-            for heading, value in specs_data.items():
-                if heading and value:
-                    ProductSpecification.objects.create(
-                        product=instance,
-                        specification_title=heading.strip(),
-                        specification=value.strip()
-                    )
+            # Create new specifications
+            for spec in specs_data:
+                ProductSpecification.objects.create(
+                    product=instance,
+                    specification_title=spec['title'].strip(),
+                    specification=spec['value'].strip()
+                )
 
+            # Handle categories
             instance.categories.clear()
             instance.categories.add(*self.cleaned_data['categories'])
 
+            # Handle images
             images = self.files.getlist('additional_images')
             for image in images:
-                ProductImage.objects.create(product=instance, product_image=image)
+                ProductImage.objects.create(
+                    product=instance,
+                    product_image=image
+                )
 
+            # Handle documents
             documents = self.files.getlist('additional_documents')
             for document in documents:
                 ProductDocument.objects.create(
@@ -141,15 +187,3 @@ class ProductForm(forms.ModelForm):
                 )
 
         return instance
-    
-
-
-
-
-
-
-
-
-
-
-
