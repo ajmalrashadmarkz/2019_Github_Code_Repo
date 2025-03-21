@@ -1,0 +1,57 @@
+version: '3'
+services:
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=admin
+      - POSTGRES_USER=ubuntu
+    volumes:
+      - odoo-db-data:/var/lib/postgresql/data
+    networks:
+      - odoo-network
+    ports:
+      - "5433:5432"
+
+  odoo:
+    build:
+      context: ..  # Use the parent directory where the Odoo source is located
+      dockerfile: docker/Dockerfile  # Ensure the correct Dockerfile path
+    depends_on:
+      - db
+    volumes:
+      - ../odoo.conf:/opt/odoo/odoo18_v1/odoo.conf:ro  
+      - ../:/opt/odoo/odoo18_v1:ro  # Mount the whole Odoo directory as read-only
+      - odoo-data:/var/lib/odoo
+      - odoo-logs:/var/log/odoo
+      - ../addons:/mnt/extra-addons  # Ensure addons are correctly mounted
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=ubuntu
+      - DB_PASSWORD=admin
+    ports:
+      - "8069:8069"
+      - "8072:8072"
+    networks:
+      - odoo-network
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ../docker/nginx:/etc/nginx/conf.d:ro
+      - ../docker/logs/nginx:/var/log/nginx
+    depends_on:
+      - odoo
+    networks:
+      - odoo-network
+
+networks:
+  odoo-network:
+
+volumes:
+  odoo-db-data:
+  odoo-data:
+  odoo-logs:
