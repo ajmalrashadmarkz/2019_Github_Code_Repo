@@ -15,16 +15,16 @@ services:
 
   odoo:
     build:
-      context: ..  # Use the parent directory where the Odoo source is located
-      dockerfile: docker/Dockerfile  # Ensure the correct Dockerfile path
+      context: ..
+      dockerfile: docker/Dockerfile
     depends_on:
       - db
     volumes:
-      - ../odoo.conf:/opt/odoo/odoo18_v1/odoo.conf:ro  
-      - ../:/opt/odoo/odoo18_v1:ro  # Mount the whole Odoo directory as read-only
+      - ../odoo.conf:/opt/odoo/odoo18_v1/odoo.conf:ro
+      - ../:/opt/odoo/odoo18_v1:ro
       - odoo-data:/var/lib/odoo
       - odoo-logs:/var/log/odoo
-      - ../addons:/mnt/extra-addons  # Ensure addons are correctly mounted
+      - ../addons:/mnt/extra-addons
     environment:
       - DB_HOST=db
       - DB_PORT=5432
@@ -41,8 +41,8 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ../docker/nginx:/etc/nginx/conf.d:ro
-      - ../docker/logs/nginx:/var/log/nginx
+      - ./nginx/odoo.conf:/etc/nginx/conf.d/default.conf:ro  # Changed this line
+      - ./logs/nginx:/var/log/nginx
     depends_on:
       - odoo
     networks:
