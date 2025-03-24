@@ -32,9 +32,9 @@ services:
       - ../odoo.conf:/opt/odoo/odoo18_v1/config/odoo.conf
       - odoo-data:/var/lib/odoo
       - odoo-logs:/var/log/odoo
-      - ../addons:/mnt/extra-addons
       - ../odoo18_v1/odoo/addons:/opt/odoo/odoo18_v1/odoo/addons
       - ../odoo18_v1/addons:/opt/odoo/odoo18_v1/addons
+      - ../OpenHRMS:/opt/odoo/odoo18_v1/addons/OpenHRMS
     environment:
       - HOST=db
       - PORT=5432
