@@ -4,10 +4,17 @@ FROM ubuntu:22.04
 # Prevent interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Set environment variables
+# Set environment variables for better logging and performance
 ENV LANG=C.UTF-8 \
     LC_ALL=C.UTF-8 \
-    PYTHONUNBUFFERED=1
+    PYTHONUNBUFFERED=1 \
+    PYTHONFAULTHANDLER=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONHASHSEED=random
+
+# Create odoo user with specific UID/GID for better permission management
+RUN groupadd -g 1000 odoo && \
+    useradd -u 1000 -g odoo -d /opt/odoo -m -s /bin/bash odoo
 
 # Install system dependencies and newer version of meson
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -42,28 +49,30 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/* \
     && python3 -m pip install --no-cache-dir meson>=0.64.0
 
-# Create odoo user and set up directories
-RUN useradd -m -d /opt/odoo -U -r -s /bin/bash odoo \
-    && mkdir -p /var/lib/odoo \
+# Set up directories with proper permissions
+RUN mkdir -p /var/lib/odoo \
     && mkdir -p /var/log/odoo \
     && mkdir -p /mnt/extra-addons \
     && chown -R odoo:odoo /var/lib/odoo \
     && chown -R odoo:odoo /var/log/odoo \
-    && chown -R odoo:odoo /mnt/extra-addons
+    && chown -R odoo:odoo /mnt/extra-addons \
+    && chmod -R 755 /var/log/odoo
 
-# Copy only necessary files first to leverage Docker cache
+# Copy requirements first for better cache utilization
 COPY --chown=odoo:odoo ../requirements.txt /opt/odoo/odoo18_v1/
 WORKDIR /opt/odoo/odoo18_v1
 
 # Install Python dependencies
 RUN python3 -m pip install --no-cache-dir --upgrade pip setuptools wheel \
-    && python3 -m pip install --no-cache-dir -r requirements.txt
+    && python3 -m pip install --no-cache-dir -r requirements.txt \
+    && python3 -m pip install --no-cache-dir python-json-logger
 
-# Now copy the rest of the application code
+# Copy application code
 COPY --chown=odoo:odoo ../ /opt/odoo/odoo18_v1
 
-# Set up proper permissions
-RUN chown -R odoo:odoo /opt/odoo
+# Set proper permissions for the Odoo directory
+RUN chown -R odoo:odoo /opt/odoo \
+    && chmod -R u+rw /opt/odoo
 
 # Switch to odoo user
 USER odoo
@@ -71,5 +80,12 @@ USER odoo
 # Expose Odoo ports
 EXPOSE 8069 8072
 
-# Set default command
-CMD ["./odoo-bin", "-c", "/opt/odoo/odoo18_v1/odoo.conf"]
+# Create directory for custom logging config
+RUN mkdir -p /opt/odoo/odoo18_v1/logging
+
+# Add a startup script
+COPY --chown=odoo:odoo docker/scripts/docker-entrypoint.sh /opt/odoo/
+RUN chmod +x /opt/odoo/docker-entrypoint.sh
+
+ENTRYPOINT ["/opt/odoo/docker-entrypoint.sh"]
+CMD ["./odoo-bin"]
