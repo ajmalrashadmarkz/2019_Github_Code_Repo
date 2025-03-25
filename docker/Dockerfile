@@ -59,7 +59,7 @@ RUN mkdir -p /var/lib/odoo \
     && chmod -R 755 /var/log/odoo
 
 # Copy requirements first for better cache utilization
-COPY --chown=odoo:odoo ../requirements.txt /opt/odoo/odoo18_v1/
+COPY --chown=odoo:odoo requirements.txt /opt/odoo/odoo18_v1/
 WORKDIR /opt/odoo/odoo18_v1
 
 # Install Python dependencies
@@ -68,7 +68,7 @@ RUN python3 -m pip install --no-cache-dir --upgrade pip setuptools wheel \
     && python3 -m pip install --no-cache-dir python-json-logger
 
 # Copy application code
-COPY --chown=odoo:odoo ../ /opt/odoo/odoo18_v1
+COPY --chown=odoo:odoo . /opt/odoo/odoo18_v1
 
 # Set proper permissions for the Odoo directory
 RUN chown -R odoo:odoo /opt/odoo \
