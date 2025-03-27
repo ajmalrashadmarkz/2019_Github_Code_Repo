@@ -10,13 +10,16 @@ ENV LANG=C.UTF-8 \
     PYTHONUNBUFFERED=1 \
     PYTHONFAULTHANDLER=1 \
     PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONHASHSEED=random
+    PYTHONHASHSEED=random \
+    # Add virtual environment path to PATH
+    VIRTUAL_ENV=/opt/odoo/venv \
+    PATH="/opt/odoo/venv/bin:$PATH"
 
 # Create odoo user with specific UID/GID for better permission management
 RUN groupadd -g 1000 odoo && \
     useradd -u 1000 -g odoo -d /opt/odoo -m -s /bin/bash odoo
 
-# Install system dependencies and newer version of meson
+# Install system dependencies with optimized layer and cleanup
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
     python3-pip \
@@ -44,48 +47,51 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     wget \
     ninja-build \
     libcairo2-dev \
-    python3-pip \
+    curl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
-    && python3 -m pip install --no-cache-dir meson>=0.64.0
+    && rm -rf /tmp/*
 
 # Set up directories with proper permissions
 RUN mkdir -p /var/lib/odoo \
-    && mkdir -p /var/log/odoo \
-    && mkdir -p /mnt/extra-addons \
+    /var/log/odoo \
+    /mnt/extra-addons \
+    /opt/odoo/odoo18_v1 \
     && chown -R odoo:odoo /var/lib/odoo \
-    && chown -R odoo:odoo /var/log/odoo \
-    && chown -R odoo:odoo /mnt/extra-addons \
-    && chmod -R 755 /var/log/odoo
+    /var/log/odoo \
+    /mnt/extra-addons \
+    /opt/odoo
 
-# Copy requirements first for better cache utilization
-COPY --chown=odoo:odoo requirements.txt /opt/odoo/odoo18_v1/
-WORKDIR /opt/odoo/odoo18_v1
-
-# Install Python dependencies
-RUN python3 -m pip install --no-cache-dir --upgrade pip setuptools wheel \
-    && python3 -m pip install --no-cache-dir -r requirements.txt \
-    && python3 -m pip install --no-cache-dir python-json-logger
-
-# Copy application code
-COPY --chown=odoo:odoo . /opt/odoo/odoo18_v1
-
-# Set proper permissions for the Odoo directory
-RUN chown -R odoo:odoo /opt/odoo \
-    && chmod -R u+rw /opt/odoo
-
-# Switch to odoo user
+# Switch to odoo user for creating virtual environment
 USER odoo
 
-# Expose Odoo ports
-EXPOSE 8069 8072
+# Create and activate virtual environment
+RUN python3 -m venv $VIRTUAL_ENV
+
+# Set working directory
+WORKDIR /opt/odoo/odoo18_v1
+
+# Copy requirements first for better cache utilization
+COPY --chown=odoo:odoo requirements.txt ./
+
+# Install Python dependencies in virtual environment
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel \
+    && pip install --no-cache-dir -r requirements.txt \
+    && pip install --no-cache-dir python-json-logger \
+    && pip install --no-cache-dir meson>=0.64.0
+
+# Copy application code
+COPY --chown=odoo:odoo . .
 
 # Create directory for custom logging config
-RUN mkdir -p /opt/odoo/odoo18_v1/logging
+RUN mkdir -p logging
 
 # Add a startup script
 COPY --chown=odoo:odoo docker/scripts/docker-entrypoint.sh /opt/odoo/
 RUN chmod +x /opt/odoo/docker-entrypoint.sh
+
+# Expose Odoo ports
+EXPOSE 8069 8072
 
 ENTRYPOINT ["/opt/odoo/docker-entrypoint.sh"]
 CMD ["./odoo-bin"]
