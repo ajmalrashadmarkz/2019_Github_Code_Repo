@@ -25,6 +25,11 @@ services:
       retries: 5
       start_period: 10s
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   odoo:
     build:
@@ -37,7 +42,6 @@ services:
       - odoo-config:/opt/odoo/odoo18_v1/config
       - ../odoo.conf:/opt/odoo/odoo18_v1/config/odoo.conf:ro
       - odoo-data:/var/lib/odoo
-      - odoo-logs:/var/log/odoo
       - ../addons:/mnt/extra-addons:ro
     environment:
       - HOST=db
@@ -57,7 +61,9 @@ services:
       "--config=/opt/odoo/odoo18_v1/config/odoo.conf",
       "--log-level=info",
       "--workers=2",
-      "--max-cron-threads=1"
+      "--max-cron-threads=1",
+      "--logfile=",
+      "--log-handler=:INFO"
     ]
     ports:
       - "8069:8069"
@@ -71,6 +77,11 @@ services:
       retries: 3
       start_period: 60s
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   nginx:
     image: nginx:stable-alpine
@@ -85,6 +96,11 @@ services:
     networks:
       - odoo-network
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 networks:
   odoo-network:
@@ -93,6 +109,5 @@ networks:
 volumes:
   odoo-db-data:
   odoo-data:
-  odoo-logs:
   odoo-config:
   nginx-cache:

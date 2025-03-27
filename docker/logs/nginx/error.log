@@ -2254,3 +2254,101 @@
 2025/03/26 11:48:03 [notice] 1#1: worker process 21 exited with code 0
 2025/03/26 11:48:03 [notice] 1#1: cache manager process 22 exited with code 0
 2025/03/26 11:48:03 [notice] 1#1: exit
+2025/03/27 06:41:36 [notice] 1#1: using the "epoll" event method
+2025/03/27 06:41:36 [notice] 1#1: nginx/1.26.3
+2025/03/27 06:41:36 [notice] 1#1: built by gcc 13.2.1 20240309 (Alpine 13.2.1_git20240309) 
+2025/03/27 06:41:36 [notice] 1#1: OS: Linux 5.15.167.4-microsoft-standard-WSL2
+2025/03/27 06:41:36 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2025/03/27 06:41:36 [notice] 1#1: start worker processes
+2025/03/27 06:41:36 [notice] 1#1: start worker process 21
+2025/03/27 06:41:36 [notice] 1#1: start worker process 22
+2025/03/27 06:41:36 [notice] 1#1: start worker process 23
+2025/03/27 06:41:36 [notice] 1#1: start worker process 24
+2025/03/27 06:41:36 [notice] 1#1: start cache manager process 25
+2025/03/27 06:41:36 [notice] 1#1: start cache loader process 26
+2025/03/27 06:41:49 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2025/03/27 06:41:49 [notice] 21#21: gracefully shutting down
+2025/03/27 06:41:49 [notice] 21#21: exiting
+2025/03/27 06:41:49 [notice] 23#23: gracefully shutting down
+2025/03/27 06:41:49 [notice] 23#23: exiting
+2025/03/27 06:41:49 [notice] 21#21: exit
+2025/03/27 06:41:49 [notice] 23#23: exit
+2025/03/27 06:41:49 [notice] 22#22: gracefully shutting down
+2025/03/27 06:41:49 [notice] 26#26: exiting
+2025/03/27 06:41:49 [notice] 22#22: exiting
+2025/03/27 06:41:49 [notice] 22#22: exit
+2025/03/27 06:41:49 [notice] 24#24: gracefully shutting down
+2025/03/27 06:41:49 [notice] 24#24: exiting
+2025/03/27 06:41:49 [notice] 24#24: exit
+2025/03/27 06:41:49 [notice] 25#25: exiting
+2025/03/27 06:41:49 [notice] 1#1: signal 17 (SIGCHLD) received from 26
+2025/03/27 06:41:49 [notice] 1#1: worker process 23 exited with code 0
+2025/03/27 06:41:49 [notice] 1#1: cache loader process 26 exited with code 0
+2025/03/27 06:41:49 [notice] 1#1: signal 29 (SIGIO) received
+2025/03/27 06:41:49 [notice] 1#1: signal 17 (SIGCHLD) received from 25
+2025/03/27 06:41:49 [notice] 1#1: cache manager process 25 exited with code 0
+2025/03/27 06:41:49 [notice] 1#1: signal 29 (SIGIO) received
+2025/03/27 06:41:49 [notice] 1#1: signal 17 (SIGCHLD) received from 21
+2025/03/27 06:41:49 [notice] 1#1: worker process 21 exited with code 0
+2025/03/27 06:41:49 [notice] 1#1: worker process 22 exited with code 0
+2025/03/27 06:41:49 [notice] 1#1: signal 17 (SIGCHLD) received from 24
+2025/03/27 06:41:49 [notice] 1#1: worker process 24 exited with code 0
+2025/03/27 06:41:49 [notice] 1#1: signal 29 (SIGIO) received
+2025/03/27 06:41:49 [notice] 1#1: exit
+2025/03/27 06:56:55 [notice] 1#1: using the "epoll" event method
+2025/03/27 06:56:55 [notice] 1#1: nginx/1.26.3
+2025/03/27 06:56:55 [notice] 1#1: built by gcc 13.2.1 20240309 (Alpine 13.2.1_git20240309) 
+2025/03/27 06:56:55 [notice] 1#1: OS: Linux 5.15.167.4-microsoft-standard-WSL2
+2025/03/27 06:56:55 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2025/03/27 06:56:55 [notice] 1#1: start worker processes
+2025/03/27 06:56:55 [notice] 1#1: start worker process 22
+2025/03/27 06:56:55 [notice] 1#1: start worker process 23
+2025/03/27 06:56:55 [notice] 1#1: start worker process 24
+2025/03/27 06:56:55 [notice] 1#1: start worker process 25
+2025/03/27 06:56:55 [notice] 1#1: start cache manager process 26
+2025/03/27 06:56:55 [notice] 1#1: start cache loader process 27
+2025/03/27 06:57:55 [notice] 27#27: http file cache: /var/cache/nginx/odoo 2.441M, bsize: 4096
+2025/03/27 06:57:55 [notice] 1#1: signal 17 (SIGCHLD) received from 27
+2025/03/27 06:57:55 [notice] 1#1: cache loader process 27 exited with code 0
+2025/03/27 06:57:55 [notice] 1#1: signal 29 (SIGIO) received
+2025/03/27 08:10:21 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2025/03/27 08:10:21 [notice] 26#26: exiting
+2025/03/27 08:10:21 [notice] 24#24: gracefully shutting down
+2025/03/27 08:10:21 [notice] 25#25: gracefully shutting down
+2025/03/27 08:10:21 [notice] 25#25: exiting
+2025/03/27 08:10:21 [notice] 24#24: exiting
+2025/03/27 08:10:21 [notice] 24#24: exit
+2025/03/27 08:10:21 [notice] 25#25: exit
+2025/03/27 08:10:21 [notice] 23#23: gracefully shutting down
+2025/03/27 08:10:21 [notice] 22#22: gracefully shutting down
+2025/03/27 08:10:21 [notice] 23#23: exiting
+2025/03/27 08:10:21 [notice] 22#22: exiting
+2025/03/27 08:10:21 [notice] 23#23: exit
+2025/03/27 08:10:21 [notice] 22#22: exit
+2025/03/27 08:10:21 [notice] 1#1: signal 17 (SIGCHLD) received from 24
+2025/03/27 08:10:21 [notice] 1#1: worker process 24 exited with code 0
+2025/03/27 08:10:21 [notice] 1#1: worker process 25 exited with code 0
+2025/03/27 08:10:21 [notice] 1#1: cache manager process 26 exited with code 0
+2025/03/27 08:10:21 [notice] 1#1: signal 29 (SIGIO) received
+2025/03/27 08:10:21 [notice] 1#1: signal 17 (SIGCHLD) received from 23
+2025/03/27 08:10:21 [notice] 1#1: worker process 23 exited with code 0
+2025/03/27 08:10:21 [notice] 1#1: signal 29 (SIGIO) received
+2025/03/27 08:10:21 [notice] 1#1: signal 17 (SIGCHLD) received from 22
+2025/03/27 08:10:21 [notice] 1#1: worker process 22 exited with code 0
+2025/03/27 08:10:21 [notice] 1#1: exit
+2025/03/27 08:16:00 [notice] 1#1: using the "epoll" event method
+2025/03/27 08:16:00 [notice] 1#1: nginx/1.26.3
+2025/03/27 08:16:00 [notice] 1#1: built by gcc 13.2.1 20240309 (Alpine 13.2.1_git20240309) 
+2025/03/27 08:16:00 [notice] 1#1: OS: Linux 5.15.167.4-microsoft-standard-WSL2
+2025/03/27 08:16:00 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2025/03/27 08:16:00 [notice] 1#1: start worker processes
+2025/03/27 08:16:00 [notice] 1#1: start worker process 22
+2025/03/27 08:16:00 [notice] 1#1: start worker process 23
+2025/03/27 08:16:00 [notice] 1#1: start worker process 24
+2025/03/27 08:16:00 [notice] 1#1: start worker process 25
+2025/03/27 08:16:00 [notice] 1#1: start cache manager process 26
+2025/03/27 08:16:00 [notice] 1#1: start cache loader process 27
+2025/03/27 08:17:00 [notice] 27#27: http file cache: /var/cache/nginx/odoo 0.066M, bsize: 4096
+2025/03/27 08:17:00 [notice] 1#1: signal 17 (SIGCHLD) received from 27
+2025/03/27 08:17:00 [notice] 1#1: cache loader process 27 exited with code 0
+2025/03/27 08:17:00 [notice] 1#1: signal 29 (SIGIO) received
