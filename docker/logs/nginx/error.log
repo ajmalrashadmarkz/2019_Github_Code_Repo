@@ -2352,3 +2352,79 @@
 2025/03/27 08:17:00 [notice] 1#1: signal 17 (SIGCHLD) received from 27
 2025/03/27 08:17:00 [notice] 1#1: cache loader process 27 exited with code 0
 2025/03/27 08:17:00 [notice] 1#1: signal 29 (SIGIO) received
+2025/03/28 04:57:41 [notice] 1#1: using the "epoll" event method
+2025/03/28 04:57:41 [notice] 1#1: nginx/1.26.3
+2025/03/28 04:57:41 [notice] 1#1: built by gcc 13.2.1 20240309 (Alpine 13.2.1_git20240309) 
+2025/03/28 04:57:41 [notice] 1#1: OS: Linux 5.15.167.4-microsoft-standard-WSL2
+2025/03/28 04:57:41 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2025/03/28 04:57:41 [notice] 1#1: start worker processes
+2025/03/28 04:57:41 [notice] 1#1: start worker process 20
+2025/03/28 04:57:41 [notice] 1#1: start worker process 21
+2025/03/28 04:57:41 [notice] 1#1: start worker process 22
+2025/03/28 04:57:41 [notice] 1#1: start worker process 23
+2025/03/28 04:57:41 [notice] 1#1: start cache manager process 24
+2025/03/28 04:57:41 [notice] 1#1: start cache loader process 25
+2025/03/28 04:58:41 [notice] 25#25: http file cache: /var/cache/nginx/odoo 0.000M, bsize: 4096
+2025/03/28 04:58:41 [notice] 1#1: signal 17 (SIGCHLD) received from 25
+2025/03/28 04:58:41 [notice] 1#1: cache loader process 25 exited with code 0
+2025/03/28 04:58:41 [notice] 1#1: signal 29 (SIGIO) received
+2025/03/28 06:05:48 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2025/03/28 06:05:48 [notice] 20#20: gracefully shutting down
+2025/03/28 06:05:48 [notice] 21#21: gracefully shutting down
+2025/03/28 06:05:48 [notice] 22#22: gracefully shutting down
+2025/03/28 06:05:48 [notice] 23#23: gracefully shutting down
+2025/03/28 06:05:48 [notice] 20#20: exiting
+2025/03/28 06:05:48 [notice] 21#21: exiting
+2025/03/28 06:05:48 [notice] 22#22: exiting
+2025/03/28 06:05:48 [notice] 23#23: exiting
+2025/03/28 06:05:48 [notice] 20#20: exit
+2025/03/28 06:05:48 [notice] 21#21: exit
+2025/03/28 06:05:48 [notice] 23#23: exit
+2025/03/28 06:05:48 [notice] 24#24: exiting
+2025/03/28 06:05:48 [notice] 22#22: exit
+2025/03/28 06:05:48 [notice] 1#1: signal 17 (SIGCHLD) received from 24
+2025/03/28 06:05:48 [notice] 1#1: worker process 20 exited with code 0
+2025/03/28 06:05:48 [notice] 1#1: worker process 21 exited with code 0
+2025/03/28 06:05:48 [notice] 1#1: worker process 22 exited with code 0
+2025/03/28 06:05:48 [notice] 1#1: worker process 23 exited with code 0
+2025/03/28 06:05:48 [notice] 1#1: cache manager process 24 exited with code 0
+2025/03/28 06:05:48 [notice] 1#1: exit
+2025/03/28 06:08:40 [notice] 1#1: using the "epoll" event method
+2025/03/28 06:08:40 [notice] 1#1: nginx/1.26.3
+2025/03/28 06:08:40 [notice] 1#1: built by gcc 13.2.1 20240309 (Alpine 13.2.1_git20240309) 
+2025/03/28 06:08:40 [notice] 1#1: OS: Linux 5.15.167.4-microsoft-standard-WSL2
+2025/03/28 06:08:40 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2025/03/28 06:08:40 [notice] 1#1: start worker processes
+2025/03/28 06:08:40 [notice] 1#1: start worker process 21
+2025/03/28 06:08:40 [notice] 1#1: start worker process 22
+2025/03/28 06:08:40 [notice] 1#1: start worker process 23
+2025/03/28 06:08:40 [notice] 1#1: start worker process 24
+2025/03/28 06:08:40 [notice] 1#1: start cache manager process 25
+2025/03/28 06:08:40 [notice] 1#1: start cache loader process 26
+2025/03/28 06:08:51 [notice] 1#1: signal 3 (SIGQUIT) received, shutting down
+2025/03/28 06:08:51 [notice] 21#21: gracefully shutting down
+2025/03/28 06:08:51 [notice] 25#25: exiting
+2025/03/28 06:08:51 [notice] 23#23: gracefully shutting down
+2025/03/28 06:08:51 [notice] 21#21: exiting
+2025/03/28 06:08:51 [notice] 23#23: exiting
+2025/03/28 06:08:51 [notice] 21#21: exit
+2025/03/28 06:08:51 [notice] 23#23: exit
+2025/03/28 06:08:51 [notice] 22#22: gracefully shutting down
+2025/03/28 06:08:51 [notice] 22#22: exiting
+2025/03/28 06:08:51 [notice] 22#22: exit
+2025/03/28 06:08:51 [notice] 24#24: gracefully shutting down
+2025/03/28 06:08:51 [notice] 24#24: exiting
+2025/03/28 06:08:51 [notice] 24#24: exit
+2025/03/28 06:08:51 [notice] 26#26: exiting
+2025/03/28 06:08:51 [notice] 1#1: signal 17 (SIGCHLD) received from 21
+2025/03/28 06:08:51 [notice] 1#1: worker process 21 exited with code 0
+2025/03/28 06:08:51 [notice] 1#1: worker process 22 exited with code 0
+2025/03/28 06:08:51 [notice] 1#1: worker process 23 exited with code 0
+2025/03/28 06:08:51 [notice] 1#1: signal 29 (SIGIO) received
+2025/03/28 06:08:51 [notice] 1#1: signal 17 (SIGCHLD) received from 24
+2025/03/28 06:08:51 [notice] 1#1: worker process 24 exited with code 0
+2025/03/28 06:08:51 [notice] 1#1: cache manager process 25 exited with code 0
+2025/03/28 06:08:51 [notice] 1#1: signal 29 (SIGIO) received
+2025/03/28 06:08:51 [notice] 1#1: signal 17 (SIGCHLD) received from 26
+2025/03/28 06:08:51 [notice] 1#1: cache loader process 26 exited with code 0
+2025/03/28 06:08:51 [notice] 1#1: exit
