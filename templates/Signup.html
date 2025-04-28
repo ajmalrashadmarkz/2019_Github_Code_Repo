@@ -1,0 +1,201 @@
+{% extends 'BaseNav.html' %}
+
+
+{% load static %}
+
+{% block body %}
+
+   <style>
+    .auth-container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .btn {
+            width: 100%;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+        .btn-primary {
+            background-color: #1a73e8;
+            color: white;
+        }
+        .btn-google {
+            background-color: white;
+            color: #757575;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .divider {
+            margin: 1.5rem 0;
+            text-align: center;
+            position: relative;
+        }
+        .divider::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 45%;
+            height: 1px;
+            background-color: #ddd;
+        }
+        .divider::after {
+            content: "";
+            position: absolute;
+            right: 0;
+            top: 50%;
+            width: 45%;
+            height: 1px;
+            background-color: #ddd;
+        }
+        .links {
+            margin-top: 1rem;
+            text-align: center;
+        }
+        .links a {
+            color: #1a73e8;
+            text-decoration: none;
+        }
+   </style>
+   
+    <section class="a-login">
+        {% if messages %}
+    {% for message in messages %}
+    <div class="container">
+        <div class="container-fluid">
+            <div class="alert alert-success alert-dismissible fade show" role="alert" id="alert-{{ loop.index }}">
+                <center>
+                    {{ message }}
+                </center>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+        <div class="container">
+            <div class="login-area">
+                
+               
+
+                <form method="POST" action="{% url 'main_login' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="product_id" value="{{ product_id }}">
+                    <input type="hidden" name="product_name" value="{{ product_name }}">
+                    <div class="form-group">
+                        <label for="" class="form-label">Email </label>
+                        <input type="email" class="form-control" id="email" name="email" placeholder="name@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="*******">
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary">
+                            Login
+                        </button>
+                    </div>
+                    <div class="divider">or</div>
+
+                    <button class="btn btn-google">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google logo" width="18" height="18">
+                        Continue with Google
+                    </button>
+                    &nbsp;
+                    <div class="mb-3 create-ac">
+                        <span>Dont have an Account ? Create one</span>
+                    </div>
+
+                </form>
+
+                <div class="mb-3">
+                    {% if product_id and product_name %}
+                        <a href="{% url 'register_Patient' %}?product_id={{ product_id }}&product_name={{ product_name|urlencode }}">
+                            <button class="log-btn reg">
+                                Are you a patient?
+                            </button>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'register_Patient' %}">
+                            <button class="log-btn reg">
+                                Are you a patient?
+                            </button>
+                        </a>
+                    {% endif %}
+                </div>              
+                
+                <div class="mb-3 create-ac">
+                    <span>OR</span>
+                </div>
+                <div class="mb-3">
+                    <a href="{% url 'register_Doctor' %}">
+                    <button class="log-btn reg">
+                        are you a doctor?
+                    </button>
+                    </a>
+                </div>
+                <div class="mb-3 create-ac">
+                    <span>OR</span>
+                </div>
+                <div class="mb-3">
+                    <a href="{% url 'register_healthCare' %}">
+                    <button class="log-btn reg">
+                        are you a healthcare provider?
+                    </button>
+                    </a>
+                </div>
+                <div class="mb-3 create-ac">
+                    <a href="{% url 'forgot_password' %}">
+                    <span>Forgotten Password ?</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+   
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            setTimeout(() => {
+                document.querySelectorAll('.alert').forEach(alert => {
+                    alert.classList.remove('show');
+                    alert.classList.add('fade');
+                    setTimeout(() => {
+                        alert.remove();
+                    }, 500); // Allow time for fade-out effect
+                });
+            }, 2000); // 2 seconds delay
+        });
+    </script>
+    
+    <script src="assets/js/main.js"></script>
+
+
+{% endblock %}    
