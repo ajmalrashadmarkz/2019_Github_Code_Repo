@@ -239,6 +239,30 @@ class SEOManager(User):
         super().save(*args, **kwargs)
 
 
+class Partner(User):
+    partner_company_name = models.CharField(max_length=255)
+    business_type = models.CharField(max_length=100)
+    partnership_level = models.CharField(
+        max_length=20,
+        choices=[
+            ('BRONZE', 'Bronze Partner'),
+            ('SILVER', 'Silver Partner'),
+            ('GOLD', 'Gold Partner'),
+        ],
+        default='BRONZE'
+    )
+    partnership_date = models.DateField(auto_now_add=True)
+    
+    class Meta:
+        verbose_name = 'Partner'
+        verbose_name_plural = 'Partners'
+
+    def save(self, *args, **kwargs):
+        account_type, _ = AccountType.objects.get_or_create(type='Partner')
+        self.account_type = account_type
+        super().save(*args, **kwargs)
+
+
 
 
 

@@ -82,7 +82,10 @@ def account_login(request):
                 redirect_url = 'admin_dashboard-dashboard'
             elif authenticated_user.account_type and authenticated_user.account_type.id == 2:  # SEO Manager
                 request.session['seomanagerid'] = authenticated_user.id
-                redirect_url = 'seo_dashboard-dashboard'  # Change to your actual SEO dashboard URL
+                redirect_url = 'seo_dashboard-dashboard' 
+            elif authenticated_user.account_type and authenticated_user.account_type.id == 3:
+                request.session['partnerid'] = authenticated_user.id
+                return JsonResponse({'message': 'Partner Dashboard'})
             else:
                 messages.error(request, "Access denied. Invalid account type.")
                 return render(request, 'login.html')
@@ -128,8 +131,56 @@ def account_login(request):
 ################################################################################
 
 from django.http import JsonResponse
+from .models import AccountType
+from django.utils.translation import gettext as _
+
+
+
+def create_partner_account_type(request):
+    print("####################")
+    
+    return JsonResponse({'message': 'Please Contact Admin'})
+
+    # try:
+    #     # Create partner account type
+    #     partner_type = AccountType.objects.create(
+    #         type="Partner",
+    #         description="""
+    #         Partner account type for business collaborators.
+    #         Access Levels:
+    #         - Partnership dashboard
+    #         - Business analytics
+    #         - Resource management
+    #         - Collaboration tools
+    #         """.strip(),
+    #         is_active=True
+    #     )
+        
+    #     # Success response
+    #     return JsonResponse({
+    #         'status': 'success',
+    #         'message': _('Partner account type created successfully'),
+    #         'data': {
+    #             'id': partner_type.id,
+    #             'type': partner_type.type,
+    #             'description': partner_type.description,
+    #             'is_active': partner_type.is_active
+    #         }
+    #     })
+        
+    # except Exception as e:
+
+    #     return JsonResponse({
+    #         'status': 'error',
+    #         'message': str(e)
+    #     }, status=400)
+
+
+################################################################################
+
+from django.http import JsonResponse
 from .models import SEOManager
-from .models import AdminUser
+from .models import AdminUser,Partner
 from admin_dashboard.views import admin_required
 
 
@@ -138,7 +189,8 @@ def create_admin_user(request):
     
     # admin = AdminUser.objects.get(email='admin@hubnetix.com')
     # print(admin.username)
-    return JsonResponse({'message': 'Please Contact Admin'})
+    
+    # return JsonResponse({'message': 'Please Contact Admin'})
 
     # email = request.POST.get('email', 'admin@example.com')
     # username = request.POST.get('username', 'admin123')
@@ -178,6 +230,45 @@ def create_admin_user(request):
     #     report_frequency=report_frequency
     # )
     # return JsonResponse({'message': 'User created successfully', 'user_id': seo_manager.id})
+
+
+
+
+    # Get data from POST request with default values
+    email = request.POST.get('email', 'partner_1@hubnetix.com')
+    username = request.POST.get('username', 'partner123_1')
+    password = request.POST.get('password', 'admin@123_1')
+    first_name = request.POST.get('first_name', 'Partner_1')
+    last_name = request.POST.get('last_name', 'User_1')
+    partner_company_name = request.POST.get('partner_company_name', 'Partner Company_1')  
+    business_type = request.POST.get('business_type', 'Technology')
+    partnership_level = request.POST.get('partnership_level', 'BRONZE')
+    
+    try:
+        # Create the partner user using create_user method
+        partner = Partner.objects.create_user(
+            email=email,
+            username=username,
+            password=password,
+            first_name=first_name,
+            last_name=last_name,
+            partner_company_name=partner_company_name,
+            business_type=business_type,
+            partnership_level=partnership_level
+        )
+        
+        return JsonResponse({
+            'message': 'Partner user created successfully',
+            'user_id': partner.id,
+            'company': partner.partner_company_name,
+            'partnership_level': partner.partnership_level
+        })
+        
+    except Exception as e:
+        return JsonResponse({
+            'error': str(e),
+            'message': 'Failed to create partner user'
+        }, status=400)
 
 
 

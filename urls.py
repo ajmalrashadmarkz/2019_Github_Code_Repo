@@ -5,5 +5,6 @@ urlpatterns = [
     path('', views.login_page, name='account-login-page'),
     path('login/', views.account_login, name='user_account-login-function'),
     path('create_admin_user/', views.create_admin_user, name='create_admin_user'),
+    path('create_partner_account_type/', views.create_partner_account_type, name='create_partner_account_type'),
     
 ]
